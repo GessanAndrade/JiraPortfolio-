@@ -1,0 +1,111 @@
+<template>
+    <lightning-card>
+    <div class="board">
+
+        <!-- TO DO -->
+        <section class="col"
+                 data-col="To Do"
+                 ondragover={handleDragOver}
+                 ondragleave={handleDragLeave}
+                 ondrop={handleDrop}>
+            <h3>To Do</h3>
+
+            <template for:each={todo} for:item="card">
+                <div key={card.id}
+                     class="card"
+                     draggable="true"
+                     data-id={card.id}
+                     data-title={card.title}
+                     ondragstart={handleDragStart}
+                     ondragend={handleDragEnd}>
+                    <p>Title: {card.title}</p>
+                    <br/>
+                    <p>Developer: {card.developer}</p>
+                </div>
+            </template>
+</section>
+
+
+<!-- DOING -->
+<section class="col" data-col="Doing" ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}>
+    <h3>Doing</h3>
+
+    <template for:each={doing} for:item="card">
+                <div key={card.id}
+                     class="card"
+                     draggable="true"
+                     data-id={card.id}
+                     data-title={card.title}
+                     ondragstart={handleDragStart}
+                     ondragend={handleDragEnd}>
+                    <p>Title: {card.title}</p>
+                    <br/>
+                    <p>Developer: {card.developer}</p>
+                </div>
+            </template>
+</section>
+
+
+<!-- TEST -->
+<section class="col" data-col="Test" ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}>
+    <h3>Test</h3>
+
+    <template for:each={test} for:item="card">
+                <div key={card.id}
+                     class="card"
+                     draggable="true"
+                     data-id={card.id}
+                     data-title={card.title}
+                     ondragstart={handleDragStart}
+                     ondragend={handleDragEnd}>
+                    <p>Title: {card.title}</p>
+                    <br/>
+                    <p>Developer: {card.developer}</p>
+                </div>
+            </template>
+</section>
+
+
+<!-- DONE -->
+<section class="col" data-col="Done" ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}>
+    <h3>Done</h3>
+
+    <template for:each={done} for:item="card">
+                <div key={card.id}
+                     class="card"
+                     draggable="true"
+                     data-id={card.id}
+                     data-title={card.title}
+                     ondragstart={handleDragStart}
+                     ondragend={handleDragEnd}>
+                    <p>Title: {card.title}</p>
+                    <br/>
+                    <p>Developer: {card.developer}</p>
+                </div>
+            </template>
+</section>
+
+
+<!-- REJECTED -->
+<section class="col" data-col="Rejected" ondragover={handleDragOver} ondragleave={handleDragLeave} ondrop={handleDrop}>
+    <h3>Rejected</h3>
+
+    <template for:each={rejected} for:item="card">
+                <div key={card.id}
+                     class="card"
+                     draggable="true"
+                     data-id={card.id}
+                     data-title={card.title}
+                     ondragstart={handleDragStart}
+                     ondragend={handleDragEnd}>
+                    <p>Title: {card.title}</p>
+                    <br/>
+                    <p>Developer: {card.developer}</p>
+                </div>
+            </template>
+</section>
+
+</div>
+<p slot="footer">Gessan Andrade LWC</p>
+</lightning-card>
+</template>

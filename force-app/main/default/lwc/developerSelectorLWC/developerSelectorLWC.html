@@ -1,0 +1,30 @@
+<template>
+    <lightning-card>
+
+          <div class="slds-grid slds-wrap">
+    
+            <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                
+                <lightning-combobox
+                    name="Developer"
+                    label="Choose a Developer"
+                    value={value}
+                    placeholder="Select Developer"
+                    options={options}
+                    onchange={handleChange}>
+                </lightning-combobox>
+
+            </div>
+
+            </div>
+
+            <br />
+
+            <lightning-button 
+                label="Update Developer"
+                onclick={handleButtonClickDeveloper}>
+            </lightning-button>
+            
+    <p slot="footer">Gessan Andrade LWC</p>
+    </lightning-card>
+</template>

@@ -1,0 +1,21 @@
+<template>
+    <lightning-card title="Developers">
+        <div class="slds-p-around_medium">
+
+            <template if:true={contas}>
+                <ul>
+                    <template for:each={contas} for:item="conta">
+                        <li key={conta.Id}>
+                            <div>{conta.Name__c}</div>
+                            <div>{conta.Id}</div></li>
+                    </template>
+</ul>
+</template>
+
+<template if:true={error}>
+                <p>Erro: {error}</p>
+            </template>
+
+</div>
+</lightning-card>
+</template>
