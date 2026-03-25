@@ -44,4 +44,23 @@ public with sharing class TaskControllerTest {
       System.assertEquals('Task Title ' + i, tasks[i].Title__c);
     }
   }
+
+  @isTest
+  static void testGetTasksByDeveloperWithNullThrowsError() {
+    Boolean hasError = false;
+
+    try {
+      Test.startTest();
+      TaskController.getTasksByDeveloper(null);
+      Test.stopTest();
+    } catch (AuraHandledException e) {
+      hasError = true;
+    }
+
+    System.assertEquals(
+      true,
+      hasError,
+      'Expected AuraHandledException for null developerId.'
+    );
+  }
 }

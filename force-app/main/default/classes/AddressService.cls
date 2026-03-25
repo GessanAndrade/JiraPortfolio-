@@ -5,7 +5,7 @@ public with sharing class AddressService {
     try {
       return AddressSelector.getAllAddresses();
     } catch (Exception e) {
-      throw new AuraHandledException('Unable to load addresses.');
+      throw ErrorHandler.handled('Unable to load addresses.');
     }
   }
 
@@ -19,13 +19,13 @@ public with sharing class AddressService {
     try {
       Address__c address = AddressSelector.getAddressById(addressId);
       if (address == null) {
-        throw new AuraHandledException('Address not found.');
+        throw ErrorHandler.handled('Address not found.');
       }
       return address;
     } catch (AuraHandledException e) {
       throw e;
     } catch (Exception e) {
-      throw new AuraHandledException('Unable to load address.');
+      throw ErrorHandler.handled('Unable to load address.');
     }
   }
 
@@ -33,7 +33,7 @@ public with sharing class AddressService {
     AddressDomain.validateAddressCreateability();
 
     if (String.isBlank(city) || String.isBlank(cep)) {
-      throw new AuraHandledException('City and CEP are required.');
+      throw ErrorHandler.handled('City and CEP are required.');
     }
 
     Address__c address = new Address__c(
@@ -46,7 +46,7 @@ public with sharing class AddressService {
     try {
       insert address;
     } catch (DmlException e) {
-      throw new AuraHandledException('Unable to create address.');
+      throw ErrorHandler.handled('Unable to create address.');
     }
   }
 }

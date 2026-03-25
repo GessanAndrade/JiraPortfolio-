@@ -12,27 +12,27 @@ public with sharing class DeveloperService {
   public static Developer__c getDeveloperById(Id developerId) {
     DeveloperDomain.validateDeveloperAcessibility();
     if (developerId == null) {
-      throw new AuraHandledException('DeveloperId cannot be null.');
+      throw ErrorHandler.handled('DeveloperId cannot be null.');
     }
 
     try {
       Developer__c developer = DeveloperSelector.getDeveloperById(developerId);
       if (developer == null) {
-        throw new AuraHandledException('Developer not found.');
+        throw ErrorHandler.handled('Developer not found.');
       }
 
       return developer;
     } catch (AuraHandledException e) {
       throw e;
     } catch (Exception e) {
-      throw new AuraHandledException('Unable to load developer.');
+      throw ErrorHandler.handled('Unable to load developer.');
     }
   }
 
   public static void createDeveloper(String name, Id addressId) {
     DeveloperDomain.validateDeveloperCreateability();
     if (String.isBlank(name) || addressId == null) {
-      throw new AuraHandledException('Name and Address are required.');
+      throw ErrorHandler.handled('Name and Address are required.');
     }
 
     Developer__c developer = new Developer__c(
@@ -45,14 +45,14 @@ public with sharing class DeveloperService {
     try {
       insert developer;
     } catch (DmlException e) {
-      throw new AuraHandledException('Unable to create developer.');
+      throw ErrorHandler.handled('Unable to create developer.');
     }
   }
 
   public static void updateDeveloper(Developer__c developer) {
     DeveloperDomain.validateDeveloperUpdateability();
     if (developer == null || developer.Id == null) {
-      throw new AuraHandledException('Developer Id is required.');
+      throw ErrorHandler.handled('Developer Id is required.');
     }
 
     DeveloperDomain.validateDeveloperFields(developer);
@@ -60,7 +60,7 @@ public with sharing class DeveloperService {
     try {
       update developer;
     } catch (DmlException e) {
-      throw new AuraHandledException('Unable to update developer.');
+      throw ErrorHandler.handled('Unable to update developer.');
     }
   }
 }
