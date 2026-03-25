@@ -1,6 +1,9 @@
 public with sharing class DeveloperService {
     
     public static List<Developer__c> getAllDevelopers() {
+
+        DeveloperDomain.validateDeveloperAcessibility();
+
         try {
             return DeveloperSelector.getAllDevelopers();
         } catch (Exception e) {
@@ -9,6 +12,8 @@ public with sharing class DeveloperService {
     }
 
     public static Developer__c getDeveloperById(Id developerId) {
+       
+        DeveloperDomain.validateDeveloperAcessibility();
         if (developerId == null) {
             throw new AuraHandledException('DeveloperId cannot be null.');
         }
@@ -18,6 +23,7 @@ public with sharing class DeveloperService {
             if (developer == null) {
                 throw new AuraHandledException('Developer not found.');
             }
+
             return developer;
         } catch (AuraHandledException e) {
             throw e;
@@ -27,18 +33,18 @@ public with sharing class DeveloperService {
     }
 
     public static void createDeveloper(String name, Id addressId) {
-        if (String.isBlank(name)) {
-            throw new AuraHandledException('Developer name is required.');
-        }
 
-        if (addressId == null) {
-            throw new AuraHandledException('AddressId is required.');
+        DeveloperDomain.validateDeveloperCreateability();
+        if (String.isBlank(name) || addressId == null) {
+            throw new AuraHandledException('Name and Address are required.');
         }
 
         Developer__c developer = new Developer__c(
             Name__c = name.trim(),
             Address__c = addressId
         );
+
+        DeveloperDomain.validateDeveloperFields(developer);
 
         try {
             insert developer;
@@ -48,9 +54,13 @@ public with sharing class DeveloperService {
     }
 
     public static void updateDeveloper(Developer__c developer) {
+        
+        DeveloperDomain.validateDeveloperUpdateability();
         if (developer == null || developer.Id == null) {
-            throw new AuraHandledException('Valid developer is required.');
+            throw new AuraHandledException('Developer Id is required.');
         }
+
+        DeveloperDomain.validateDeveloperFields(developer);
 
         try {
             update developer;

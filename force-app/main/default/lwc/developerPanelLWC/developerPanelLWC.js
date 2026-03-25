@@ -1,6 +1,6 @@
 import { api, LightningElement, wire } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import { subscribe, MessageContext } from 'lightning/messageService';
+import { subscribe, unsubscribe, MessageContext } from 'lightning/messageService';
 import SIMPLE_CHANNEL from '@salesforce/messageChannel/SimpleMessageChannel__c';
 
 import updateDeveloper from '@salesforce/apex/DeveloperController.updateDeveloper';
@@ -37,7 +37,7 @@ export default class DeveloperPanelLWC extends LightningElement {
     receivedMessage = '';
 
     subscribeToMessageChannel() {
-        subscribe(this.messageContext, SIMPLE_CHANNEL, (message) => {
+        this.subscription = subscribe(this.messageContext, SIMPLE_CHANNEL, (message) => {
             if (message.Integer === 0) {
                 this.processarDeveloper(message.Id);
                 this.receivedMessage = message.Id;
@@ -56,7 +56,7 @@ export default class DeveloperPanelLWC extends LightningElement {
                         this.dispatchEvent(
                             new ShowToastEvent({
                                 title: 'Erro ao atualizar',
-                                message: 'Ocorreu um erro ao atualizar o developer.' + ' Detalhes: ' + error.body.message,
+                                message: `Ocorreu um erro ao atualizar o developer. Detalhes: ${error.body.message}`,
                                 variant: 'error'
                             })
                         );
@@ -145,7 +145,7 @@ export default class DeveloperPanelLWC extends LightningElement {
                 );
 
             })
-            .catch((error) => {
+            .catch(() => {
                 this.dispatchEvent(
                     new ShowToastEvent({
                         title: 'Erro ao atualizar',
@@ -183,7 +183,9 @@ export default class DeveloperPanelLWC extends LightningElement {
 
         getDeveloperByTaskId({ taskId: this.recordId })
             .then((devId) => {
-                this.processarDeveloper(devId.Id);
+                if (devId && devId.Id) {
+                    this.processarDeveloper(devId.Id);
+                }
             })
             .catch((error) => {
                 this.error = error;

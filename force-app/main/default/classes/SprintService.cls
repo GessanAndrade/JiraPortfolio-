@@ -74,10 +74,11 @@ public with sharing class SprintService {
     }
 
     public static void createSprint(String name, Date startDate, Date endDate) {
+
+        SprintDomain.validateSprintCreateability();
         if (startDate == null || endDate == null) {
             throw new AuraHandledException('StartDate and EndDate are required.');
         }
-
         if (endDate < startDate) {
             throw new AuraHandledException('EndDate cannot be before StartDate.');
         }
@@ -85,8 +86,10 @@ public with sharing class SprintService {
         Sprint__c sprint = new Sprint__c(
             Date_Begin__c = startDate,
             Date_End__c = endDate,
-            Status__c = 'to do'
+            Status__c = 'Active'
         );
+        
+        SprintDomain.validateSprintFields(sprint);
 
         try {
             insert sprint;
@@ -96,14 +99,14 @@ public with sharing class SprintService {
     }
 
     public static void updateSprintDates(Id sprintId, Date newStartDate, Date newEndDate) {
+
+        SprintDomain.validateSprintUpdateability();
         if (sprintId == null) {
             throw new AuraHandledException('SprintId is required.');
         }
-
         if (newStartDate == null || newEndDate == null) {
             throw new AuraHandledException('StartDate and EndDate are required.');
         }
-
         if (newEndDate < newStartDate) {
             throw new AuraHandledException('EndDate cannot be before StartDate.');
         }
@@ -115,6 +118,8 @@ public with sharing class SprintService {
 
         sprint.Date_Begin__c = newStartDate;
         sprint.Date_End__c = newEndDate;
+
+        SprintDomain.validateSprintFields(sprint);
 
         try {
             update sprint;

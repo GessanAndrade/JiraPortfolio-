@@ -33,7 +33,7 @@ public with sharing class TaskControllerTest {
         ];
 
         Test.startTest();
-        List<Task__c> tasks = TaskController.getTasksForDeveloper(developer.Id);
+        List<Task__c> tasks = TaskController.getTasksByDeveloper(developer.Id);
         Test.stopTest();
 
         System.assertEquals(5, tasks.size(), 'Expected 5 tasks for the developer');

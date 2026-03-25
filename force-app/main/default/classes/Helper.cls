@@ -44,7 +44,7 @@ public with sharing class Helper {
         List<Sprint__c> sprints = new List<Sprint__c>();
         for (Integer i = 0; i < count; i++) {
             sprints.add(new Sprint__c(
-                Status__c = 'inativo',
+                Status__c = 'Active',
                 Date_Begin__c = Date.today().addDays(i * 7),
                 Date_End__c = Date.today().addDays((i + 1) * 7)
             ));

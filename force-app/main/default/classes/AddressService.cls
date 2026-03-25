@@ -1,6 +1,8 @@
 public with sharing class AddressService {
 
-    public static List<Address__c> getAllAddresses() {
+    public static List<Address__c> getAllAddresses() {  
+        AddressDomain.validateAddressAcessibility();
+
         try {
             return AddressSelector.getAllAddresses();
         } catch (Exception e) {
@@ -9,6 +11,8 @@ public with sharing class AddressService {
     }
 
     public static Address__c getAddressById(Id addressId) {
+        AddressDomain.validateAddressAcessibility();
+
         if (addressId == null) {
             throw new AuraHandledException('AddressId cannot be null.');
         }
@@ -27,15 +31,15 @@ public with sharing class AddressService {
     }
 
     public static void createAddress(String city, String cep) {
-        if (String.isBlank(city)) {
-            throw new AuraHandledException('City is required.');
-        }
+        AddressDomain.validateAddressCreateability();
 
-        if (String.isBlank(cep)) {
-            throw new AuraHandledException('CEP is required.');
+        if (String.isBlank(city) || String.isBlank(cep)) {
+            throw new AuraHandledException('City and CEP are required.');
         }
 
         Address__c address = new Address__c(City__c = city.trim(), CEP__c = cep.trim());
+
+        AddressDomain.validateAddressFields(address);
 
         try {
             insert address;

@@ -55,6 +55,11 @@ public with sharing class TaskService {
     }
 
     public static void updateTaskDeveloper(Id taskId, Id developerId) {
+
+        if(!Schema.sObjectType.Task__c.isUpdateable()){
+            throw new AuraHandledException('You do not have permission to update Task.');
+        }
+
         if (taskId == null || developerId == null) {
             throw new AuraHandledException('TaskId and DeveloperId are required.');
         }
@@ -62,6 +67,9 @@ public with sharing class TaskService {
         Task__c taskToUpdate = TaskSelector.getTaskById(taskId);
         if (taskToUpdate == null) {
             throw new AuraHandledException('Task not found.');
+        }
+        if (!Schema.sObjectType.Task__c.fields.Developer__c.isUpdateable()) {
+            throw new AuraHandledException('You do not have permission to update task developer.');
         }
 
         taskToUpdate.Developer__c = developerId;
@@ -74,6 +82,11 @@ public with sharing class TaskService {
     }
 
     public static void updateTaskStatus(Id taskId, String newStatus) {
+
+        if(!Schema.sObjectType.Task__c.isUpdateable()){
+            throw new AuraHandledException('You do not have permission to update Task.');
+        }
+
         if (taskId == null || String.isBlank(newStatus)) {
             throw new AuraHandledException('TaskId and Status are required.');
         }
@@ -85,6 +98,9 @@ public with sharing class TaskService {
 
         if (taskToUpdate.Status__c == 'Done') {
             throw new AuraHandledException('You cannot modify a completed task.');
+        }
+        if (!Schema.sObjectType.Task__c.fields.Status__c.isUpdateable()) {
+            throw new AuraHandledException('You do not have permission to update task status.');
         }
 
         taskToUpdate.Status__c = newStatus;

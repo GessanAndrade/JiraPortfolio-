@@ -10,23 +10,20 @@ public class AddressControllerTest {
 
     @isTest
     public static void testGetAllAddresses() {
-        AddressController controller = new AddressController();
-        List<Address__c> addresses = controller.getAllAddresses();
+        List<Address__c> addresses = AddressController.getAllAddresses();
         System.Assert.areEqual(2, addresses.size(), 'Expected 2 addresses');
     }
 
     @isTest
     public static void testGetAddressById() {
         Address__c address = [SELECT Id FROM Address__c LIMIT 1];
-        AddressController controller = new AddressController();
-        Address__c result = controller.getAddressById(address.Id);
+        Address__c result = AddressController.getAddressById(address.Id);
         System.Assert.isNotNull(result, 'Expected to find an address'); 
     }
 
     @isTest
     public static void testCreateAddress() {
-        AddressController controller = new AddressController();
-        controller.createAddress('City Test', 'CEP Test');  
+        AddressController.createAddress('City Test', 'CEP Test');  
         Address__c result = [SELECT Id FROM Address__c WHERE City__c = 'City Test' AND CEP__c = 'CEP Test' LIMIT 1];
         System.Assert.isNotNull(result, 'Expected to find the created address');    
     } 

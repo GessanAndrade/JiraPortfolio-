@@ -135,6 +135,7 @@ export default class PainelKanban extends LightningElement {
     loadTasks() {
         getTasksFromActiveSprint()
             .then((tasks) => {
+                const normalizedTasks = Array.isArray(tasks) ? tasks : [];
 
                 const todo = [];
                 const doing = [];
@@ -142,7 +143,7 @@ export default class PainelKanban extends LightningElement {
                 const done = [];
                 const rejected = [];
 
-                for (const task of tasks) {
+                for (const task of normalizedTasks) {
                     const item = { id: task.Id, title: task.Title__c, developer: task.Developer__r.Name__c };
 
                     if (task.Status__c === 'To Do') todo.push(item);

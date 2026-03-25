@@ -1,6 +1,9 @@
 public with sharing class SprintTaskService {
 
     public static Decimal getPointsByDeveloperActiveSprint(Id developerId) {
+        
+        SprintTaskDomain.validateSprintTaskAcessibility();
+        
         if (developerId == null) {
             throw new AuraHandledException('DeveloperId cannot be null.');
         }
@@ -53,9 +56,14 @@ public with sharing class SprintTaskService {
     }
 
     public static void createTaskBySprint(Id sprintId, Id taskId) {
-        if (sprintId == null || taskId == null) {
-            throw new AuraHandledException('SprintId and TaskId are required.');
+
+        SprintTaskDomain.validateSprintTaskCreateability();
+        if (!Schema.sObjectType.Sprint_Task__c.fields.Sprint_FKN__c.isCreateable() ||
+            !Schema.sObjectType.Sprint_Task__c.fields.Task__c.isCreateable()) {
+            throw new AuraHandledException('You do not have permission to set Sprint Task fields.');
         }
+
+        SprintTaskDomain.validateSprintTaskFields(new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId));
 
         try {
             insert new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId);
@@ -65,6 +73,9 @@ public with sharing class SprintTaskService {
     }
 
     public static void updateTaskStatus(Id sprintTaskId, String newStatus) {
+
+        SprintTaskDomain.validateSprintTaskUpdateability();
+
         throw new AuraHandledException('Invalid operation. Update the status on Task__c, not on Sprint_Task__c.');
     }
 }
