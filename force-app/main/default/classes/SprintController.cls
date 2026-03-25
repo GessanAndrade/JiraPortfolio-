@@ -1,50 +1,47 @@
 public with sharing class SprintController {
+  @AuraEnabled(cacheable=true)
+  public static List<Sprint__c> getAllSprints() {
+    SprintDomain.validateSprintAcessibility();
 
-    @AuraEnabled(cacheable=true)
-    public static List<Sprint__c> getAllSprints() {
+    return SprintService.getAllSprints();
+  }
 
-        SprintDomain.validateSprintAcessibility();
+  @AuraEnabled(cacheable=true)
+  public static Sprint__c getActiveSprint() {
+    SprintDomain.validateSprintAcessibility();
 
-        return SprintService.getAllSprints();
-    }
+    return SprintService.getActiveSprint();
+  }
 
-    @AuraEnabled(cacheable=true)
-    public static Sprint__c getActiveSprint() {
+  @AuraEnabled
+  public static void createSprint(String name, Date startDate, Date endDate) {
+    SprintDomain.validateSprintCreateability();
 
-        SprintDomain.validateSprintAcessibility();
+    SprintService.createSprint(name, startDate, endDate);
+  }
 
-        return SprintService.getActiveSprint();
-    }
+  @AuraEnabled
+  public static void updateSprintDates(
+    Id sprintId,
+    Date newStartDate,
+    Date newEndDate
+  ) {
+    SprintDomain.validateSprintUpdateability();
 
-    @AuraEnabled
-    public static void createSprint(String name, Date startDate, Date endDate) {
+    SprintService.updateSprintDates(sprintId, newStartDate, newEndDate);
+  }
 
-        SprintDomain.validateSprintCreateability();
-	
-        SprintService.createSprint(name, startDate, endDate);
-    }
+  @AuraEnabled(cacheable=true)
+  public static List<Task__c> getTasksBySprint(Id sprintId) {
+    SprintDomain.validateSprintAcessibility();
 
-    @AuraEnabled
-    public static void updateSprintDates(Id sprintId, Date newStartDate, Date newEndDate) {
+    return SprintService.getTasksBySprint(sprintId);
+  }
 
-        SprintDomain.validateSprintUpdateability();
+  @AuraEnabled(cacheable=true)
+  public static List<Task__c> getTasksFromActiveSprint() {
+    SprintDomain.validateSprintAcessibility();
 
-        SprintService.updateSprintDates(sprintId, newStartDate, newEndDate);
-    }
-
-    @AuraEnabled(cacheable=true)
-    public static List<Task__c> getTasksBySprint(Id sprintId) {
-
-        SprintDomain.validateSprintAcessibility();
-
-        return SprintService.getTasksBySprint(sprintId);
-    }
-
-    @AuraEnabled(cacheable=true)
-    public static List<Task__c> getTasksFromActiveSprint() {    
-
-        SprintDomain.validateSprintAcessibility();
-
-        return SprintService.getTasksFromActiveSprint();
-    }
+    return SprintService.getTasksFromActiveSprint();
+  }
 }

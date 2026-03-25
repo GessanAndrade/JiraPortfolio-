@@ -1,81 +1,93 @@
 public with sharing class SprintTaskService {
+  public static Decimal getPointsByDeveloperActiveSprint(Id developerId) {
+    SprintTaskDomain.validateSprintTaskAcessibility();
 
-    public static Decimal getPointsByDeveloperActiveSprint(Id developerId) {
-        
-        SprintTaskDomain.validateSprintTaskAcessibility();
-        
-        if (developerId == null) {
-            throw new AuraHandledException('DeveloperId cannot be null.');
-        }
-
-        try {
-            Sprint__c sprint = SprintService.getActiveSprint();
-            if (sprint == null) {
-                return 0;
-            }
-
-            List<Sprint_Task__c> tasks = SprintTaskSelector.getListTasksBySprint(sprint.Id);
-            if (tasks == null || tasks.isEmpty()) {
-                return 0;
-            }
-
-            Set<Id> taskIdsSet = new Set<Id>();
-            for (Sprint_Task__c st : tasks) {
-                if (st.Task__c != null) taskIdsSet.add(st.Task__c);
-            }
-
-            if (taskIdsSet.isEmpty()) {
-                return 0;
-            }
-
-            List<Task__c> taskDetails = TaskService.getTasksFromSprintTasksAndIdDeveloper(new List<Id>(taskIdsSet), developerId);
-
-            Decimal totalPoints = 0;
-            for (Task__c t : taskDetails) {
-                totalPoints += (t.Points__c == null ? 0 : t.Points__c);
-            }
-
-            return totalPoints;
-        } catch (AuraHandledException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new AuraHandledException('Unable to calculate points for active sprint.');
-        }
+    if (developerId == null) {
+      throw new AuraHandledException('DeveloperId cannot be null.');
     }
 
-    public static List<Task__c> getTasksBySprintTasks(List<Id> taskIds) {
-        if (taskIds == null || taskIds.isEmpty()) {
-            throw new AuraHandledException('TaskIds cannot be empty.');
-        }
+    try {
+      Sprint__c sprint = SprintService.getActiveSprint();
+      if (sprint == null) {
+        return 0;
+      }
 
-        try {
-            return TaskSelector.getTasksByTasksIds(taskIds);
-        } catch (Exception e) {
-            throw new AuraHandledException('Unable to load tasks.');
-        }
+      List<Sprint_Task__c> tasks = SprintTaskSelector.getListTasksBySprint(
+        sprint.Id
+      );
+      if (tasks == null || tasks.isEmpty()) {
+        return 0;
+      }
+
+      Set<Id> taskIdsSet = new Set<Id>();
+      for (Sprint_Task__c st : tasks) {
+        if (st.Task__c != null)
+          taskIdsSet.add(st.Task__c);
+      }
+
+      if (taskIdsSet.isEmpty()) {
+        return 0;
+      }
+
+      List<Task__c> taskDetails = TaskService.getTasksFromSprintTasksAndIdDeveloper(
+        new List<Id>(taskIdsSet),
+        developerId
+      );
+
+      Decimal totalPoints = 0;
+      for (Task__c t : taskDetails) {
+        totalPoints += (t.Points__c == null ? 0 : t.Points__c);
+      }
+
+      return totalPoints;
+    } catch (AuraHandledException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new AuraHandledException(
+        'Unable to calculate points for active sprint.'
+      );
+    }
+  }
+
+  public static List<Task__c> getTasksBySprintTasks(List<Id> taskIds) {
+    if (taskIds == null || taskIds.isEmpty()) {
+      throw new AuraHandledException('TaskIds cannot be empty.');
     }
 
-    public static void createTaskBySprint(Id sprintId, Id taskId) {
+    try {
+      return TaskSelector.getTasksByTasksIds(taskIds);
+    } catch (Exception e) {
+      throw new AuraHandledException('Unable to load tasks.');
+    }
+  }
 
-        SprintTaskDomain.validateSprintTaskCreateability();
-        if (!Schema.sObjectType.Sprint_Task__c.fields.Sprint_FKN__c.isCreateable() ||
-            !Schema.sObjectType.Sprint_Task__c.fields.Task__c.isCreateable()) {
-            throw new AuraHandledException('You do not have permission to set Sprint Task fields.');
-        }
-
-        SprintTaskDomain.validateSprintTaskFields(new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId));
-
-        try {
-            insert new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId);
-        } catch (DmlException e) {
-            throw new AuraHandledException('Unable to add task to sprint.');
-        }
+  public static void createTaskBySprint(Id sprintId, Id taskId) {
+    SprintTaskDomain.validateSprintTaskCreateability();
+    if (
+      !Schema.sObjectType.Sprint_Task__c.fields.Sprint_FKN__c.isCreateable() ||
+      !Schema.sObjectType.Sprint_Task__c.fields.Task__c.isCreateable()
+    ) {
+      throw new AuraHandledException(
+        'You do not have permission to set Sprint Task fields.'
+      );
     }
 
-    public static void updateTaskStatus(Id sprintTaskId, String newStatus) {
+    SprintTaskDomain.validateSprintTaskFields(
+      new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId)
+    );
 
-        SprintTaskDomain.validateSprintTaskUpdateability();
-
-        throw new AuraHandledException('Invalid operation. Update the status on Task__c, not on Sprint_Task__c.');
+    try {
+      insert new Sprint_Task__c(Sprint_FKN__c = sprintId, Task__c = taskId);
+    } catch (DmlException e) {
+      throw new AuraHandledException('Unable to add task to sprint.');
     }
+  }
+
+  public static void updateTaskStatus(Id sprintTaskId, String newStatus) {
+    SprintTaskDomain.validateSprintTaskUpdateability();
+
+    throw new AuraHandledException(
+      'Invalid operation. Update the status on Task__c, not on Sprint_Task__c.'
+    );
+  }
 }

@@ -1,33 +1,29 @@
 public with sharing class DeveloperController {
-    @AuraEnabled(cacheable=true)
-    public static List<Developer__c> getAllDevelopers() {
+  @AuraEnabled(cacheable=true)
+  public static List<Developer__c> getAllDevelopers() {
+    DeveloperDomain.validateDeveloperAcessibility();
 
-        DeveloperDomain.validateDeveloperAcessibility();
+    return DeveloperService.getAllDevelopers();
+  }
 
-        return DeveloperService.getAllDevelopers();
-    }
+  @AuraEnabled(cacheable=true)
+  public static Developer__c getDeveloperById(Id developerId) {
+    DeveloperDomain.validateDeveloperAcessibility();
 
-    @AuraEnabled(cacheable=true)
-    public static Developer__c getDeveloperById(Id developerId) {
+    return DeveloperService.getDeveloperById(developerId);
+  }
 
-        DeveloperDomain.validateDeveloperAcessibility();
+  @AuraEnabled
+  public static void createDeveloper(String name, Id addressId) {
+    DeveloperDomain.validateDeveloperCreateability();
 
-        return DeveloperService.getDeveloperById(developerId);
-    }
+    DeveloperService.createDeveloper(name, addressId);
+  }
 
-    @AuraEnabled
-    public static void createDeveloper(String name, Id addressId) {
+  @AuraEnabled
+  public static void updateDeveloper(Developer__c developer) {
+    DeveloperDomain.validateDeveloperUpdateability();
 
-        DeveloperDomain.validateDeveloperCreateability();
-
-        DeveloperService.createDeveloper(name, addressId);
-    }
-
-    @AuraEnabled
-    public static void updateDeveloper(Developer__c developer) {
-
-        DeveloperDomain.validateDeveloperUpdateability();
-
-        DeveloperService.updateDeveloper(developer);
-    }   
+    DeveloperService.updateDeveloper(developer);
+  }
 }

@@ -1,77 +1,83 @@
 <template>
-    <lightning-card title="Developer Perfil" icon-name="standard:contact">
-        <div class="slds-p-around_medium">
+  <lightning-card title="Developer Perfil" icon-name="standard:contact">
+    <div class="slds-p-around_medium">
+      <template if:true={developer}>
+        <div class="slds-grid slds-wrap slds-gutters">
+          <!-- Coluna do formulário -->
+          <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+            <lightning-input
+              type="text"
+              label="Name:"
+              value={developer.Name__c}
+              onchange={handleNameChange}
+            >
+            </lightning-input>
 
-            <template if:true={developer}>
+            <lightning-combobox
+              label="Role:"
+              value={developer.Role__c}
+              options={roleOptions}
+              onchange={handleRoleChange}
+            >
+            </lightning-combobox>
 
-                <div class="slds-grid slds-wrap slds-gutters">
+            <lightning-combobox
+              label="Level:"
+              value={developer.Level__c}
+              options={levelOptions}
+              onchange={handleLevelChange}
+            >
+            </lightning-combobox>
 
-                    <!-- Coluna do formulário -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_2-of-3">
+            <lightning-input
+              type="number"
+              label="Age:"
+              value={developer.Age__c}
+              onchange={handleAgeChange}
+            >
+            </lightning-input>
 
-                        <lightning-input 
-                            type="text" 
-                            label="Name:" 
-                            value={developer.Name__c} 
-                            onchange={handleNameChange}>
-                        </lightning-input>
+            <lightning-textarea
+              name="inputArea"
+              label="Bio: "
+              value={developer.Bio__c}
+              onchange={handleBioChange}
+            >
+            </lightning-textarea>
 
-                        <lightning-combobox 
-                            label="Role:"
-                            value={developer.Role__c}
-                            options={roleOptions}
-                            onchange={handleRoleChange}>
-                        </lightning-combobox>
+            <div class="slds-m-top_medium">
+              <lightning-button
+                label="Salvar"
+                onclick={salvarAlteracoes}
+              ></lightning-button>
+            </div>
+          </div>
 
-                        <lightning-combobox
-                            label="Level:"
-                            value={developer.Level__c}
-                            options={levelOptions}
-                            onchange={handleLevelChange}>
-                        </lightning-combobox>
+          <!-- Coluna da imagem -->
+          <div
+            class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-text-align_center slds-m-top_medium"
+          >
+            <img
+              src={profileImage}
+              alt="Profile"
+              style="max-width: 60%; border-radius: 50%"
+            />
+            <br />
+            <br />
+            <br />
+            <br />
+            <p>Demand:</p>
+            <img
+              src={cargaImage}
+              alt="Carga de trabalho"
+              style="max-width: 60%"
+            />
+            <p>{statusCarga}</p>
+          </div>
+        </div>
+      </template>
+    </div>
 
-                        <lightning-input 
-                            type="number" 
-                            label="Age:" 
-                            value={developer.Age__c}
-                            onchange={handleAgeChange}>
-                        </lightning-input>
-
-                        <lightning-textarea 
-                            name="inputArea" 
-                            label="Bio: " 
-                            value={developer.Bio__c}
-                            onchange={handleBioChange}>
-                        </lightning-textarea>
-
-                        <div class="slds-m-top_medium">
-                            <lightning-button label="Salvar" onclick={salvarAlteracoes}></lightning-button>
-                        </div>
-
-                    </div>
-
-                    <!-- Coluna da imagem -->
-                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3 slds-text-align_center slds-m-top_medium">
-                        <img src={profileImage}
-                             alt="Profile"
-                             style="max-width: 60%; border-radius: 50%;" />
-                        <br />
-                        <br />
-                        <br />
-                        <br />
-                        <p>Demand:</p>
-                        <img src={cargaImage}
-                             alt="Carga de trabalho"
-                             style="max-width: 60%;" />  
-                             <p>{statusCarga}</p>  
-                    </div>
-
-                </div>
-
-            </template>
-
-</div>
-
-<p slot="footer">Gessan Andrade LWC</p>
-</lightning-card>
+    <p slot="footer">Gessan Andrade LWC</p>
+  </lightning-card>
 </template>
