@@ -1,13 +1,7 @@
 public with sharing class SprintTaskController {
   @AuraEnabled(cacheable=true)
   public static List<Task__c> getTasksBySprintTasks(List<Id> taskIds) {
-    TaskService taskService = new TaskService(
-      new TaskDomain(),
-      new TaskSelector(),
-      new DeveloperSelector()
-    );
-
-    return taskService.getTasksByTasksIds(taskIds);
+    return FactoryTask.createTaskService().getTasksByTasksIds(taskIds);
   }
 
   @AuraEnabled(cacheable=true)
@@ -15,60 +9,25 @@ public with sharing class SprintTaskController {
     List<Id> taskIds,
     Id developerId
   ) {
-    TaskService taskService = new TaskService(
-      new TaskDomain(),
-      new TaskSelector(),
-      new DeveloperSelector()
-    );
-
-    return taskService.getTasksFromSprintTasksAndIdDeveloper(
-      taskIds,
-      developerId
-    );
+    return FactoryTask.createTaskService()
+      .getTasksFromSprintTasksAndIdDeveloper(taskIds, developerId);
   }
 
   @AuraEnabled
   public static void createTaskBySprint(Id sprintId, Id task) {
-    SprintTaskService sprintTaskService = new SprintTaskService(
-      new SprintTaskDomain(),
-      new SprintTaskSelector(),
-      new TaskService(
-        new TaskDomain(),
-        new TaskSelector(),
-        new DeveloperSelector()
-      )
-    );
-
-    sprintTaskService.createTaskBySprint(sprintId, task);
+    FactorySprintTask.createSprintTaskService()
+      .createTaskBySprint(sprintId, task);
   }
 
   @AuraEnabled
   public static void updateTaskStatus(Id taskId, String newStatus) {
-    SprintTaskService sprintTaskService = new SprintTaskService(
-      new SprintTaskDomain(),
-      new SprintTaskSelector(),
-      new TaskService(
-        new TaskDomain(),
-        new TaskSelector(),
-        new DeveloperSelector()
-      )
-    );
-
-    sprintTaskService.updateTaskStatus(taskId, newStatus);
+    FactorySprintTask.createSprintTaskService()
+      .updateTaskStatus(taskId, newStatus);
   }
 
   @AuraEnabled(cacheable=true)
   public static Decimal getPointsByDeveloperActiveSprint(Id developerId) {
-    SprintTaskService sprintTaskService = new SprintTaskService(
-      new SprintTaskDomain(),
-      new SprintTaskSelector(),
-      new TaskService(
-        new TaskDomain(),
-        new TaskSelector(),
-        new DeveloperSelector()
-      )
-    );
-
-    return sprintTaskService.getPointsByDeveloperActiveSprint(developerId);
+    return FactorySprintTask.createSprintTaskService()
+      .getPointsByDeveloperActiveSprint(developerId);
   }
 }

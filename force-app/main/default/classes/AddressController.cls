@@ -1,31 +1,16 @@
 public with sharing class AddressController {
   @AuraEnabled(cacheable=true)
   public static List<Address__c> getAllAddresses() {
-    AddressService service = new AddressService(
-      new AddressSelector(),
-      new AddressDomain()
-    );
-
-    return service.getAllAddresses();
+    return FactoryAddress.createAddressService().getAllAddresses();
   }
 
   @AuraEnabled(cacheable=true)
   public static Address__c getAddressById(Id addressId) {
-    AddressService service = new AddressService(
-      new AddressSelector(),
-      new AddressDomain()
-    );
-
-    return service.getAddressById(addressId);
+    return FactoryAddress.createAddressService().getAddressById(addressId);
   }
 
   @AuraEnabled
   public static void createAddress(String city, String cep) {
-    AddressService service = new AddressService(
-      new AddressSelector(),
-      new AddressDomain()
-    );
-
-    service.createAddress(city, cep);
+    FactoryAddress.createAddressService().createAddress(city, cep);
   }
 }
