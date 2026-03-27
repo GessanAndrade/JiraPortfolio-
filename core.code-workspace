@@ -1,0 +1,19 @@
+{
+  "folders": [
+    {
+      "path": "d:/Gessan Andrade/Cursos programação/SalesForce/ProjetoGit/JiraPortfolio-"
+    }
+  ],
+  "settings": {
+    "eslint.workingDirectories": [
+      "d:/Gessan Andrade/Cursos programação/SalesForce/ProjetoGit/JiraPortfolio-"
+    ],
+    "eslint.validate": [
+      "javascript",
+      "typescript"
+    ],
+    "eslint.options": {
+      "overrideConfigFile": "d:\\Gessan Andrade\\Cursos programação\\SalesForce\\ProjetoGit\\JiraPortfolio-\\.eslintrc.json"
+    }
+  }
+}

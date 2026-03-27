@@ -1,13 +1,13 @@
 public with sharing class SprintTaskController {
   @AuraEnabled(cacheable=true)
   public static List<Task__c> getTasksBySprintTasks(List<Id> taskIds) {
-    if (!Schema.sObjectType.Task__c.isAccessible()) {
-      throw new AuraHandledException(
-        'You do not have permission to access Task.'
-      );
-    }
+    TaskService taskService = new TaskService(
+      new TaskDomain(),
+      new TaskSelector(),
+      new DeveloperSelector()
+    );
 
-    return TaskService.getTasksByTasksIds(taskIds);
+    return taskService.getTasksByTasksIds(taskIds);
   }
 
   @AuraEnabled(cacheable=true)
@@ -15,13 +15,13 @@ public with sharing class SprintTaskController {
     List<Id> taskIds,
     Id developerId
   ) {
-    if (!Schema.sObjectType.Task__c.isAccessible()) {
-      throw new AuraHandledException(
-        'You do not have permission to access Task.'
-      );
-    }
+    TaskService taskService = new TaskService(
+      new TaskDomain(),
+      new TaskSelector(),
+      new DeveloperSelector()
+    );
 
-    return TaskService.getTasksFromSprintTasksAndIdDeveloper(
+    return taskService.getTasksFromSprintTasksAndIdDeveloper(
       taskIds,
       developerId
     );
@@ -29,34 +29,46 @@ public with sharing class SprintTaskController {
 
   @AuraEnabled
   public static void createTaskBySprint(Id sprintId, Id task) {
-    if (!Schema.sObjectType.Sprint_Task__c.isCreateable()) {
-      throw new AuraHandledException(
-        'You do not have permission to create Sprint Task.'
-      );
-    }
+    SprintTaskService sprintTaskService = new SprintTaskService(
+      new SprintTaskDomain(),
+      new SprintTaskSelector(),
+      new TaskService(
+        new TaskDomain(),
+        new TaskSelector(),
+        new DeveloperSelector()
+      )
+    );
 
-    SprintTaskService.createTaskBySprint(sprintId, task);
+    sprintTaskService.createTaskBySprint(sprintId, task);
   }
 
   @AuraEnabled
   public static void updateTaskStatus(Id taskId, String newStatus) {
-    if (!Schema.sObjectType.Task__c.isUpdateable()) {
-      throw new AuraHandledException(
-        'You do not have permission to update Task.'
-      );
-    }
+    SprintTaskService sprintTaskService = new SprintTaskService(
+      new SprintTaskDomain(),
+      new SprintTaskSelector(),
+      new TaskService(
+        new TaskDomain(),
+        new TaskSelector(),
+        new DeveloperSelector()
+      )
+    );
 
-    SprintTaskService.updateTaskStatus(taskId, newStatus);
+    sprintTaskService.updateTaskStatus(taskId, newStatus);
   }
 
   @AuraEnabled(cacheable=true)
   public static Decimal getPointsByDeveloperActiveSprint(Id developerId) {
-    if (!Schema.sObjectType.Sprint_Task__c.isAccessible()) {
-      throw new AuraHandledException(
-        'You do not have permission to access Sprint Task.'
-      );
-    }
+    SprintTaskService sprintTaskService = new SprintTaskService(
+      new SprintTaskDomain(),
+      new SprintTaskSelector(),
+      new TaskService(
+        new TaskDomain(),
+        new TaskSelector(),
+        new DeveloperSelector()
+      )
+    );
 
-    return SprintTaskService.getPointsByDeveloperActiveSprint(developerId);
+    return sprintTaskService.getPointsByDeveloperActiveSprint(developerId);
   }
 }

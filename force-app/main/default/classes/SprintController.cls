@@ -1,23 +1,35 @@
 public with sharing class SprintController {
   @AuraEnabled(cacheable=true)
   public static List<Sprint__c> getAllSprints() {
-    SprintDomain.validateSprintAcessibility();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    return SprintService.getAllSprints();
+    return service.getAllSprints();
   }
 
   @AuraEnabled(cacheable=true)
   public static Sprint__c getActiveSprint() {
-    SprintDomain.validateSprintAcessibility();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    return SprintService.getActiveSprint();
+    return service.getActiveSprint();
   }
 
   @AuraEnabled
   public static void createSprint(String name, Date startDate, Date endDate) {
-    SprintDomain.validateSprintCreateability();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    SprintService.createSprint(name, startDate, endDate);
+    service.createSprint(name, startDate, endDate);
   }
 
   @AuraEnabled
@@ -26,22 +38,34 @@ public with sharing class SprintController {
     Date newStartDate,
     Date newEndDate
   ) {
-    SprintDomain.validateSprintUpdateability();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    SprintService.updateSprintDates(sprintId, newStartDate, newEndDate);
+    service.updateSprintDates(sprintId, newStartDate, newEndDate);
   }
 
   @AuraEnabled(cacheable=true)
   public static List<Task__c> getTasksBySprint(Id sprintId) {
-    SprintDomain.validateSprintAcessibility();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    return SprintService.getTasksBySprint(sprintId);
+    return service.getTasksBySprint(sprintId);
   }
 
   @AuraEnabled(cacheable=true)
   public static List<Task__c> getTasksFromActiveSprint() {
-    SprintDomain.validateSprintAcessibility();
+    SprintService service = new SprintService(
+      new SprintDomain(),
+      new SprintSelector(),
+      new SprintTaskSelector()
+    );
 
-    return SprintService.getTasksFromActiveSprint();
+    return service.getTasksFromActiveSprint();
   }
 }

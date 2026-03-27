@@ -1,4 +1,4 @@
-public with sharing class SprintDomain {
+public with sharing class SprintDomain implements ISprintDomain {
   public static void validateSprintFields(Sprint__c sprint) {
     if (sprint.Date_Begin__c == null) {
       throw new AuraHandledException('StartDate is required.');
@@ -7,7 +7,7 @@ public with sharing class SprintDomain {
       throw new AuraHandledException('EndDate is required.');
     }
   }
-  public static void validateSprintAcessibility() {
+  public static void validateSprintAccessibility() {
     if (!Schema.sObjectType.Sprint__c.isAccessible()) {
       throw new AuraHandledException(
         'You do not have permission to access Sprint.'

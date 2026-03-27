@@ -1,22 +1,34 @@
 public with sharing class DeveloperService {
-  public static List<Developer__c> getAllDevelopers() {
-    DeveloperDomain.validateDeveloperAcessibility();
+  private IDeveloperSelector selector;
+  private IDeveloperDomain domain;
+
+  // Dependency Injection
+  public DeveloperService(
+    IDeveloperSelector selector,
+    IDeveloperDomain domain
+  ) {
+    this.selector = selector;
+    this.domain = domain;
+  }
+
+  public List<Developer__c> getAllDevelopers() {
+    domain.validateDeveloperAccessibility();
 
     try {
-      return DeveloperSelector.getAllDevelopers();
+      return selector.getAllDevelopers();
     } catch (Exception e) {
       throw new AuraHandledException('Unable to load developers.');
     }
   }
 
-  public static Developer__c getDeveloperById(Id developerId) {
-    DeveloperDomain.validateDeveloperAcessibility();
+  public Developer__c getDeveloperById(Id developerId) {
+    domain.validateDeveloperAccessibility();
     if (developerId == null) {
       throw ErrorHandler.handled('DeveloperId cannot be null.');
     }
 
     try {
-      Developer__c developer = DeveloperSelector.getDeveloperById(developerId);
+      Developer__c developer = selector.getDeveloperById(developerId);
       if (developer == null) {
         throw ErrorHandler.handled('Developer not found.');
       }
@@ -29,8 +41,8 @@ public with sharing class DeveloperService {
     }
   }
 
-  public static void createDeveloper(String name, Id addressId) {
-    DeveloperDomain.validateDeveloperCreateability();
+  public void createDeveloper(String name, Id addressId) {
+    domain.validateDeveloperCreateability();
     if (String.isBlank(name) || addressId == null) {
       throw ErrorHandler.handled('Name and Address are required.');
     }
@@ -40,7 +52,7 @@ public with sharing class DeveloperService {
       Address__c = addressId
     );
 
-    DeveloperDomain.validateDeveloperFields(developer);
+    domain.validateDeveloperFields(developer);
 
     try {
       insert developer;
@@ -49,13 +61,13 @@ public with sharing class DeveloperService {
     }
   }
 
-  public static void updateDeveloper(Developer__c developer) {
-    DeveloperDomain.validateDeveloperUpdateability();
+  public void updateDeveloper(Developer__c developer) {
+    domain.validateDeveloperUpdateability();
     if (developer == null || developer.Id == null) {
       throw ErrorHandler.handled('Developer Id is required.');
     }
 
-    DeveloperDomain.validateDeveloperFields(developer);
+    domain.validateDeveloperFields(developer);
 
     try {
       update developer;

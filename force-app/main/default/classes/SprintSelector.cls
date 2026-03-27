@@ -1,5 +1,5 @@
-public with sharing class SprintSelector {
-  public static List<Sprint__c> getAllSprints() {
+public with sharing class SprintSelector implements ISprintSelector {
+  public List<Sprint__c> getAllSprints() {
     List<Sprint__c> sprints = [
       SELECT Id, Date_Begin__c, Date_End__c
       FROM Sprint__c
@@ -13,7 +13,7 @@ public with sharing class SprintSelector {
     return (List<Sprint__c>) decision.getRecords();
   }
 
-  public static List<Sprint__c> getActiveSprints() {
+  public List<Sprint__c> getActiveSprints() {
     List<Sprint__c> sprints = [
       SELECT Id, Date_Begin__c, Date_End__c
       FROM Sprint__c
@@ -29,7 +29,7 @@ public with sharing class SprintSelector {
     return (List<Sprint__c>) decision.getRecords();
   }
 
-  public static Sprint__c getSprintById(Id sprintId) {
+  public Sprint__c getSprintById(Id sprintId) {
     List<Sprint__c> sprints = [
       SELECT Id, Date_Begin__c, Date_End__c
       FROM Sprint__c

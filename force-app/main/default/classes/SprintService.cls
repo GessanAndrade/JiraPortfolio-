@@ -1,13 +1,21 @@
 public with sharing class SprintService {
-  public static List<Task__c> getTasksBySprint(Id sprintId) {
-    if (sprintId == null) {
-      throw new AuraHandledException('SprintId cannot be null.');
-    }
+  private IsprintDomain sprintDomain;
+  private IsprintSelector sprintSelector;
+  private IsprintTaskSelector sprintTaskSelector;
 
+  public SprintService(
+    IsprintDomain sprintDomain,
+    IsprintSelector sprintSelector,
+    IsprintTaskSelector sprintTaskSelector
+  ) {
+    this.sprintDomain = sprintDomain;
+    this.sprintSelector = sprintSelector;
+    this.sprintTaskSelector = sprintTaskSelector;
+  }
+
+  public List<Task__c> getTasksBySprint(Id sprintId) {
     try {
-      List<Sprint_Task__c> sprintTasks = SprintTaskSelector.getListTasksBySprint(
-        sprintId
-      );
+      List<Sprint_Task__c> sprintTasks = sprintTaskSelector.getListTasksBySprint();
 
       if (sprintTasks == null || sprintTasks.isEmpty()) {
         return new List<Task__c>();
@@ -29,17 +37,9 @@ public with sharing class SprintService {
     }
   }
 
-  public static List<Task__c> getTasksFromActiveSprint() {
+  public List<Task__c> getTasksFromActiveSprint() {
     try {
-      Sprint__c sprint = SprintService.getActiveSprint();
-
-      if (sprint == null) {
-        return new List<Task__c>();
-      }
-
-      List<Sprint_Task__c> tasks = SprintTaskSelector.getListTasksBySprint(
-        sprint.Id
-      );
+      List<Sprint_Task__c> tasks = sprintTaskSelector.getListTasksBySprint();
 
       if (tasks == null || tasks.isEmpty()) {
         return new List<Task__c>();
@@ -63,17 +63,17 @@ public with sharing class SprintService {
     }
   }
 
-  public static List<Sprint__c> getAllSprints() {
+  public List<Sprint__c> getAllSprints() {
     try {
-      return SprintSelector.getAllSprints();
+      return sprintSelector.getAllSprints();
     } catch (Exception e) {
       throw new AuraHandledException('Unable to load sprints.');
     }
   }
 
-  public static Sprint__c getActiveSprint() {
+  public Sprint__c getActiveSprint() {
     try {
-      List<Sprint__c> activeSprints = SprintSelector.getActiveSprints();
+      List<Sprint__c> activeSprints = sprintSelector.getActiveSprints();
       return (activeSprints == null || activeSprints.isEmpty())
         ? null
         : activeSprints[0];
@@ -82,8 +82,8 @@ public with sharing class SprintService {
     }
   }
 
-  public static void createSprint(String name, Date startDate, Date endDate) {
-    SprintDomain.validateSprintCreateability();
+  public void createSprint(String name, Date startDate, Date endDate) {
+    sprintDomain.validateSprintCreateability();
     if (startDate == null || endDate == null) {
       throw new AuraHandledException('StartDate and EndDate are required.');
     }
@@ -97,7 +97,7 @@ public with sharing class SprintService {
       Status__c = 'Active'
     );
 
-    SprintDomain.validateSprintFields(sprint);
+    sprintDomain.validateSprintFields(sprint);
 
     try {
       insert sprint;
@@ -106,12 +106,12 @@ public with sharing class SprintService {
     }
   }
 
-  public static void updateSprintDates(
+  public void updateSprintDates(
     Id sprintId,
     Date newStartDate,
     Date newEndDate
   ) {
-    SprintDomain.validateSprintUpdateability();
+    sprintDomain.validateSprintUpdateability();
     if (sprintId == null) {
       throw new AuraHandledException('SprintId is required.');
     }
@@ -122,7 +122,7 @@ public with sharing class SprintService {
       throw new AuraHandledException('EndDate cannot be before StartDate.');
     }
 
-    Sprint__c sprint = SprintSelector.getSprintById(sprintId);
+    Sprint__c sprint = sprintSelector.getSprintById(sprintId);
     if (sprint == null) {
       throw new AuraHandledException('Sprint not found.');
     }
@@ -130,7 +130,7 @@ public with sharing class SprintService {
     sprint.Date_Begin__c = newStartDate;
     sprint.Date_End__c = newEndDate;
 
-    SprintDomain.validateSprintFields(sprint);
+    sprintDomain.validateSprintFields(sprint);
 
     try {
       update sprint;

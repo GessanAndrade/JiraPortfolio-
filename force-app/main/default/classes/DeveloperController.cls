@@ -1,29 +1,41 @@
 public with sharing class DeveloperController {
   @AuraEnabled(cacheable=true)
   public static List<Developer__c> getAllDevelopers() {
-    DeveloperDomain.validateDeveloperAcessibility();
+    DeveloperService service = new DeveloperService(
+      new DeveloperSelector(),
+      new DeveloperDomain()
+    );
 
-    return DeveloperService.getAllDevelopers();
+    return service.getAllDevelopers();
   }
 
   @AuraEnabled(cacheable=true)
   public static Developer__c getDeveloperById(Id developerId) {
-    DeveloperDomain.validateDeveloperAcessibility();
+    DeveloperService service = new DeveloperService(
+      new DeveloperSelector(),
+      new DeveloperDomain()
+    );
 
-    return DeveloperService.getDeveloperById(developerId);
+    return service.getDeveloperById(developerId);
   }
 
   @AuraEnabled
   public static void createDeveloper(String name, Id addressId) {
-    DeveloperDomain.validateDeveloperCreateability();
+    DeveloperService service = new DeveloperService(
+      new DeveloperSelector(),
+      new DeveloperDomain()
+    );
 
-    DeveloperService.createDeveloper(name, addressId);
+    service.createDeveloper(name, addressId);
   }
 
   @AuraEnabled
   public static void updateDeveloper(Developer__c developer) {
-    DeveloperDomain.validateDeveloperUpdateability();
+    DeveloperService service = new DeveloperService(
+      new DeveloperSelector(),
+      new DeveloperDomain()
+    );
 
-    DeveloperService.updateDeveloper(developer);
+    service.updateDeveloper(developer);
   }
 }

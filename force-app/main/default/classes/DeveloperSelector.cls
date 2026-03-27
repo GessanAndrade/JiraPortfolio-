@@ -1,5 +1,5 @@
-public with sharing class DeveloperSelector {
-  public static List<Developer__c> getAllDevelopers() {
+public with sharing class DeveloperSelector implements IDeveloperSelector {
+  public List<Developer__c> getAllDevelopers() {
     List<Developer__c> developers = [
       SELECT Id, Name__c
       FROM Developer__c
@@ -14,7 +14,7 @@ public with sharing class DeveloperSelector {
     return (List<Developer__c>) decision.getRecords();
   }
 
-  public static Developer__c getDeveloperById(Id developerId) {
+  public Developer__c getDeveloperById(Id developerId) {
     Developer__c developer = [
       SELECT
         Id,

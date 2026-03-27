@@ -1,9 +1,10 @@
-public with sharing class SprintTaskSelector {
-  public static List<Sprint_Task__c> getListTasksBySprint(Id sprintId) {
+public with sharing class SprintTaskSelector implements ISprintTaskSelector {
+  public List<Sprint_Task__c> getListTasksBySprint() {
     List<Sprint_Task__c> sprintTasks = [
       SELECT Task__c, Id, Sprint_FKN__c
       FROM Sprint_Task__c
-      WHERE Sprint_FKN__c = :sprintId
+      WHERE
+        Sprint_FKN__c IN (SELECT Id FROM Sprint__c WHERE Status__c = 'Active')
     ];
 
     SObjectAccessDecision decision = Security.stripInaccessible(
@@ -14,7 +15,7 @@ public with sharing class SprintTaskSelector {
     return (List<Sprint_Task__c>) decision.getRecords();
   }
 
-  public static Sprint_Task__c getSprintTaskById(Id taskId) {
+  public Sprint_Task__c getSprintTaskById(Id taskId) {
     Sprint_Task__c sprintTask = [
       SELECT Id, Sprint_FKN__c, Task__c
       FROM Sprint_Task__c

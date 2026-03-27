@@ -1,17 +1,32 @@
-public with sharing class TaskService {
-  public static List<Task__c> getTasksByDeveloper(Id developerId) {
-    if (developerId == null) {
-      throw ErrorHandler.handled('DeveloperId cannot be null.');
-    }
-    return TaskSelector.getTaskByDeveloper(developerId);
+public with sharing class TaskService implements ITaskService {
+  private ITaskDomain domain;
+  private ITaskselector selector;
+  private IDeveloperSelector developerSelector;
+
+  public TaskService(
+    ITaskDomain domain,
+    ITaskselector selector,
+    IDeveloperSelector developerSelector
+  ) {
+    this.domain = domain;
+    this.selector = selector;
+    this.developerSelector = developerSelector;
   }
 
-  public static Task__c getTaskById(Id taskId) {
+  public List<Task__c> getTasksByDeveloper(Id developerId) {
+    domain.validateTaskAccessibility();
+
+    return selector.getTaskByDeveloper(developerId);
+  }
+
+  public Task__c getTaskById(Id taskId) {
+    domain.validateTaskAccessibility();
+
     if (taskId == null) {
       throw ErrorHandler.handled('TaskId cannot be null.');
     }
 
-    Task__c task = TaskSelector.getTaskById(taskId);
+    Task__c task = selector.getTaskById(taskId);
     if (task == null) {
       throw ErrorHandler.handled('Task not found.');
     }
@@ -19,35 +34,38 @@ public with sharing class TaskService {
     return task;
   }
 
-  public static List<Task__c> getTasksByTasksIds(List<Id> taskIds) {
+  public List<Task__c> getTasksByTasksIds(List<Id> taskIds) {
+    domain.validateTaskAccessibility();
+
     if (taskIds == null || taskIds.isEmpty()) {
       throw ErrorHandler.handled('TaskIds cannot be empty.');
     }
-    return TaskSelector.getTasksByTasksIds(taskIds);
+    return selector.getTasksByTasksIds(taskIds);
   }
 
-  public static List<Task__c> getTasksFromSprintTasksAndIdDeveloper(
+  public List<Task__c> getTasksFromSprintTasksAndIdDeveloper(
     List<Id> taskIds,
     Id developerId
   ) {
+    domain.validateTaskAccessibility();
+
     if (taskIds == null || taskIds.isEmpty()) {
       throw ErrorHandler.handled('TaskIds cannot be empty.');
     }
     if (developerId == null) {
       throw ErrorHandler.handled('DeveloperId cannot be null.');
     }
-    return TaskSelector.getTasksFromSprintTasksAndIdDeveloper(
-      taskIds,
-      developerId
-    );
+    return selector.getTasksFromSprintTasksAndIdDeveloper(taskIds, developerId);
   }
 
-  public static Developer__c getDeveloperByTaskId(Id taskId) {
+  public Developer__c getDeveloperByTaskId(Id taskId) {
+    domain.validateTaskAccessibility();
+
     if (taskId == null) {
       throw ErrorHandler.handled('TaskId cannot be null.');
     }
 
-    Task__c task = TaskSelector.getTaskById(taskId);
+    Task__c task = selector.getTaskById(taskId);
     if (task == null) {
       throw ErrorHandler.handled('Task not found.');
     }
@@ -56,10 +74,12 @@ public with sharing class TaskService {
       throw ErrorHandler.handled('Task has no assigned developer.');
     }
 
-    return DeveloperSelector.getDeveloperById(task.Developer__c);
+    return developerSelector.getDeveloperById(task.Developer__c);
   }
 
-  public static void updateTaskDeveloper(Id taskId, Id developerId) {
+  public void updateTaskDeveloper(Id taskId, Id developerId) {
+    domain.validateTaskUpdateability();
+
     if (!Schema.sObjectType.Task__c.isUpdateable()) {
       throw ErrorHandler.handled('You do not have permission to update Task.');
     }
@@ -68,7 +88,7 @@ public with sharing class TaskService {
       throw ErrorHandler.handled('TaskId and DeveloperId are required.');
     }
 
-    Task__c taskToUpdate = TaskSelector.getTaskById(taskId);
+    Task__c taskToUpdate = selector.getTaskById(taskId);
     if (taskToUpdate == null) {
       throw ErrorHandler.handled('Task not found.');
     }
@@ -87,28 +107,10 @@ public with sharing class TaskService {
     }
   }
 
-  public static void updateTaskStatus(Id taskId, String newStatus) {
-    if (!Schema.sObjectType.Task__c.isUpdateable()) {
-      throw ErrorHandler.handled('You do not have permission to update Task.');
-    }
+  public void updateTaskStatus(Id taskId, String newStatus) {
+    domain.validateTaskUpdateability();
 
-    if (taskId == null || String.isBlank(newStatus)) {
-      throw ErrorHandler.handled('TaskId and Status are required.');
-    }
-
-    Task__c taskToUpdate = TaskSelector.getTaskById(taskId);
-    if (taskToUpdate == null) {
-      throw ErrorHandler.handled('Task not found.');
-    }
-
-    if (taskToUpdate.Status__c == 'Done') {
-      throw ErrorHandler.handled('You cannot modify a completed task.');
-    }
-    if (!Schema.sObjectType.Task__c.fields.Status__c.isUpdateable()) {
-      throw ErrorHandler.handled(
-        'You do not have permission to update task status.'
-      );
-    }
+    Task__c taskToUpdate = selector.getTaskById(taskId);
 
     taskToUpdate.Status__c = newStatus;
 

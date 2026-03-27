@@ -1,23 +1,31 @@
 public with sharing class AddressService {
-  public static List<Address__c> getAllAddresses() {
-    AddressDomain.validateAddressAcessibility();
+  private IAddressSelector selector;
+  private IAddressDomain domain;
+
+  public AddressService(IAddressSelector selector, IAddressDomain domain) {
+    this.selector = selector;
+    this.domain = domain;
+  }
+
+  public List<Address__c> getAllAddresses() {
+    domain.validateAddressAccessibility();
 
     try {
-      return AddressSelector.getAllAddresses();
+      return selector.getAllAddresses();
     } catch (Exception e) {
       throw ErrorHandler.handled('Unable to load addresses.');
     }
   }
 
-  public static Address__c getAddressById(Id addressId) {
-    AddressDomain.validateAddressAcessibility();
+  public Address__c getAddressById(Id addressId) {
+    domain.validateAddressAccessibility();
 
     if (addressId == null) {
       throw new AuraHandledException('AddressId cannot be null.');
     }
 
     try {
-      Address__c address = AddressSelector.getAddressById(addressId);
+      Address__c address = selector.getAddressById(addressId);
       if (address == null) {
         throw ErrorHandler.handled('Address not found.');
       }
@@ -29,8 +37,8 @@ public with sharing class AddressService {
     }
   }
 
-  public static void createAddress(String city, String cep) {
-    AddressDomain.validateAddressCreateability();
+  public void createAddress(String city, String cep) {
+    domain.validateAddressCreateability();
 
     if (String.isBlank(city) || String.isBlank(cep)) {
       throw ErrorHandler.handled('City and CEP are required.');
@@ -41,7 +49,7 @@ public with sharing class AddressService {
       CEP__c = cep.trim()
     );
 
-    AddressDomain.validateAddressFields(address);
+    domain.validateAddressFields(address);
 
     try {
       insert address;

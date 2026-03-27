@@ -1,4 +1,4 @@
-public with sharing class TaskSelector {
+public with sharing class TaskSelector implements ITaskSelector {
   public static List<Task__c> getTasksByTasksIds(List<Id> taskIds) {
     List<Task__c> tasks = [
       SELECT
@@ -41,7 +41,7 @@ public with sharing class TaskSelector {
     return (List<Task__c>) decision.getRecords();
   }
 
-  public static List<Task__c> getTasksFromSprintTasksAndIdDeveloper(
+  public List<Task__c> getTasksFromSprintTasksAndIdDeveloper(
     List<Id> taskIds,
     Id developerId
   ) {

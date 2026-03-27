@@ -1,5 +1,5 @@
-public with sharing class DeveloperDomain {
-  public static void validateDeveloperFields(Developer__c developer) {
+public with sharing class DeveloperDomain implements IDeveloperDomain {
+  public void validateDeveloperFields(Developer__c developer) {
     if (String.isBlank(developer.Name__c)) {
       throw new AuraHandledException('Name is required.');
     }
@@ -8,7 +8,7 @@ public with sharing class DeveloperDomain {
     }
   }
 
-  public static void validateDeveloperAcessibility() {
+  public void validateDeveloperAccessibility() {
     if (!Schema.sObjectType.Developer__c.isAccessible()) {
       throw new AuraHandledException(
         'You do not have permission to access Developer.'
@@ -16,7 +16,7 @@ public with sharing class DeveloperDomain {
     }
   }
 
-  public static void validateDeveloperCreateability() {
+  public void validateDeveloperCreateability() {
     if (!Schema.sObjectType.Developer__c.isCreateable()) {
       throw new AuraHandledException(
         'You do not have permission to create Developer.'
@@ -24,7 +24,7 @@ public with sharing class DeveloperDomain {
     }
   }
 
-  public static void validateDeveloperUpdateability() {
+  public void validateDeveloperUpdateability() {
     if (!Schema.sObjectType.Developer__c.isUpdateable()) {
       throw new AuraHandledException(
         'You do not have permission to update Developer.'
@@ -32,7 +32,7 @@ public with sharing class DeveloperDomain {
     }
   }
 
-  public static void validateDeveloperDeletability() {
+  public void validateDeveloperDeletability() {
     if (!Schema.sObjectType.Developer__c.isDeletable()) {
       throw new AuraHandledException(
         'You do not have permission to delete Developer.'

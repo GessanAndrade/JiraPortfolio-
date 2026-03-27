@@ -1,5 +1,5 @@
-public with sharing class AddressSelector {
-  public static List<Address__c> getAllAddresses() {
+public with sharing class AddressSelector implements IAddressSelector {
+  public List<Address__c> getAllAddresses() {
     List<Address__c> addresses = [SELECT Id, City__c, CEP__c FROM Address__c];
 
     SObjectAccessDecision decision = Security.stripInaccessible(
@@ -10,7 +10,7 @@ public with sharing class AddressSelector {
     return (List<Address__c>) decision.getRecords();
   }
 
-  public static Address__c getAddressById(Id addressId) {
+  public Address__c getAddressById(Id addressId) {
     Address__c address = [
       SELECT Id, Name, City__c, CEP__c
       FROM Address__c

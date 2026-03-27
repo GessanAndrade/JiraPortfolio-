@@ -1,5 +1,5 @@
-public with sharing class AddressDomain {
-  public static void validateAddressFields(Address__c address) {
+public with sharing class AddressDomain implements IAddressDomain {
+  public void validateAddressFields(Address__c address) {
     if (String.isBlank(address.City__c)) {
       throw new AuraHandledException('City is required.');
     }
@@ -8,7 +8,7 @@ public with sharing class AddressDomain {
     }
   }
 
-  public static void validateAddressAcessibility() {
+  public void validateAddressAccessibility() {
     if (!Schema.sObjectType.Address__c.isAccessible()) {
       throw new AuraHandledException(
         'You do not have permission to access Address.'
@@ -16,7 +16,7 @@ public with sharing class AddressDomain {
     }
   }
 
-  public static void validateAddressCreateability() {
+  public void validateAddressCreateability() {
     if (!Schema.sObjectType.Address__c.isCreateable()) {
       throw new AuraHandledException(
         'You do not have permission to create Address.'
@@ -24,7 +24,7 @@ public with sharing class AddressDomain {
     }
   }
 
-  public static void validateAddressUpdateability() {
+  public void validateAddressUpdateability() {
     if (!Schema.sObjectType.Address__c.isUpdateable()) {
       throw new AuraHandledException(
         'You do not have permission to update Address.'
@@ -32,7 +32,7 @@ public with sharing class AddressDomain {
     }
   }
 
-  public static void validateAddressDeletability() {
+  public void validateAddressDeletability() {
     if (!Schema.sObjectType.Address__c.isDeletable()) {
       throw new AuraHandledException(
         'You do not have permission to delete Address.'
