@@ -1,11 +1,12 @@
-List<Sprint_Task__c> sprintTasks = [
-    SELECT Task__c, Id, Sprint_FKN__c
-    FROM Sprint_Task__c
-    WHERE Sprint_FKN__c IN (
-        SELECT Id FROM Sprint__c WHERE Status__c = 'Active'
-    )
-];
+Log__c log1 = new Log__c(
+    message__c = 'teste1 erro', 
+    Error__c = 'teste1 trace'
+);
 
-for (Sprint_Task__c task : sprintTasks) {
-    System.debug('Sprint Task Id: ' + task.Id);
+insert log1;
+
+List<Log__c> logs = [SELECT Error__c FROM Log__c LIMIT 100];
+
+for (Log__c log : logs) {
+    System.debug('Log: ' + log.Error__c  );
 }

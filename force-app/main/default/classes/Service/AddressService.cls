@@ -13,7 +13,7 @@ public with sharing class AddressService {
     try {
       return selector.getAllAddresses();
     } catch (Exception e) {
-      throw ErrorHandler.handled('Unable to load addresses.');
+      throw ErrorHandler.handUnableError(e, 'addresses.');
     }
   }
 
@@ -21,19 +21,19 @@ public with sharing class AddressService {
     domain.validateAddressAccessibility();
 
     if (addressId == null) {
-      throw new AuraHandledException('AddressId cannot be null.');
+      throw ErrorHandler.handNotNullError('AddressId');
     }
 
     try {
       Address__c address = selector.getAddressById(addressId);
       if (address == null) {
-        throw ErrorHandler.handled('Address not found.');
+        throw ErrorHandler.handNotFoundError('Address');
       }
       return address;
     } catch (AuraHandledException e) {
       throw e;
     } catch (Exception e) {
-      throw ErrorHandler.handled('Unable to load address.');
+      throw ErrorHandler.handUnableError(e, 'address.');
     }
   }
 
@@ -41,7 +41,7 @@ public with sharing class AddressService {
     domain.validateAddressCreateability();
 
     if (String.isBlank(city) || String.isBlank(cep)) {
-      throw ErrorHandler.handled('City and CEP are required.');
+      throw ErrorHandler.handRequiredError('City and CEP');
     }
 
     Address__c address = new Address__c(
@@ -54,7 +54,7 @@ public with sharing class AddressService {
     try {
       insert address;
     } catch (DmlException e) {
-      throw ErrorHandler.handled('Unable to create address.');
+      throw ErrorHandler.handUnableError(e, 'address.');
     }
   }
 }

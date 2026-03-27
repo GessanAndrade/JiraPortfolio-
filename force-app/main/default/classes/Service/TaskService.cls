@@ -23,12 +23,12 @@ public with sharing class TaskService implements ITaskService {
     domain.validateTaskAccessibility();
 
     if (taskId == null) {
-      throw ErrorHandler.handled('TaskId cannot be null.');
+      throw ErrorHandler.handNotNullError('TaskId');
     }
 
     Task__c task = selector.getTaskById(taskId);
     if (task == null) {
-      throw ErrorHandler.handled('Task not found.');
+      throw ErrorHandler.handNotFoundError('Task');
     }
 
     return task;
@@ -38,7 +38,7 @@ public with sharing class TaskService implements ITaskService {
     domain.validateTaskAccessibility();
 
     if (taskIds == null || taskIds.isEmpty()) {
-      throw ErrorHandler.handled('TaskIds cannot be empty.');
+      throw ErrorHandler.handNotNullError('TaskIds or Empty');
     }
     return selector.getTasksByTasksIds(taskIds);
   }
@@ -50,10 +50,10 @@ public with sharing class TaskService implements ITaskService {
     domain.validateTaskAccessibility();
 
     if (taskIds == null || taskIds.isEmpty()) {
-      throw ErrorHandler.handled('TaskIds cannot be empty.');
+      throw ErrorHandler.handNotNullError('TaskIds or empty.');
     }
     if (developerId == null) {
-      throw ErrorHandler.handled('DeveloperId cannot be null.');
+      throw ErrorHandler.handNotNullError('DeveloperId');
     }
     return selector.getTasksFromSprintTasksAndIdDeveloper(taskIds, developerId);
   }
@@ -62,16 +62,16 @@ public with sharing class TaskService implements ITaskService {
     domain.validateTaskAccessibility();
 
     if (taskId == null) {
-      throw ErrorHandler.handled('TaskId cannot be null.');
+      throw ErrorHandler.handNotNullError('TaskId');
     }
 
     Task__c task = selector.getTaskById(taskId);
     if (task == null) {
-      throw ErrorHandler.handled('Task not found.');
+      throw ErrorHandler.handNotFoundError('Task');
     }
 
     if (task.Developer__c == null) {
-      throw ErrorHandler.handled('Task has no assigned developer.');
+      throw ErrorHandler.handNotNullError('Task');
     }
 
     return developerSelector.getDeveloperById(task.Developer__c);
@@ -80,22 +80,13 @@ public with sharing class TaskService implements ITaskService {
   public void updateTaskDeveloper(Id taskId, Id developerId) {
     domain.validateTaskUpdateability();
 
-    if (!Schema.sObjectType.Task__c.isUpdateable()) {
-      throw ErrorHandler.handled('You do not have permission to update Task.');
-    }
-
     if (taskId == null || developerId == null) {
-      throw ErrorHandler.handled('TaskId and DeveloperId are required.');
+      throw ErrorHandler.handRequiredError('TaskId and DeveloperId');
     }
 
     Task__c taskToUpdate = selector.getTaskById(taskId);
     if (taskToUpdate == null) {
-      throw ErrorHandler.handled('Task not found.');
-    }
-    if (!Schema.sObjectType.Task__c.fields.Developer__c.isUpdateable()) {
-      throw ErrorHandler.handled(
-        'You do not have permission to update task developer.'
-      );
+      throw ErrorHandler.handNotFoundError('Task');
     }
 
     taskToUpdate.Developer__c = developerId;
@@ -103,7 +94,7 @@ public with sharing class TaskService implements ITaskService {
     try {
       update taskToUpdate;
     } catch (DmlException e) {
-      throw ErrorHandler.handled('Unable to update task developer.');
+      throw ErrorHandler.handUnableError(e, 'developer.');
     }
   }
 
@@ -117,7 +108,7 @@ public with sharing class TaskService implements ITaskService {
     try {
       update taskToUpdate;
     } catch (DmlException e) {
-      throw ErrorHandler.handled('Unable to update task status.');
+      throw ErrorHandler.handUnableError(e, 'task status.');
     }
   }
 }
